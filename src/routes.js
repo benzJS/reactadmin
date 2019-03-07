@@ -2,7 +2,6 @@ import Dashboard from "views/Dashboard.jsx";
 import Icons from "views/Icons.jsx";
 import Map from "views/Map.jsx";
 import Notifications from "views/Notifications.jsx";
-import Rtl from "views/Rtl.jsx";
 import TableList from "views/TableList.jsx";
 import Campaign from "views/Campaign.jsx";
 import Typography from "views/Typography.jsx";

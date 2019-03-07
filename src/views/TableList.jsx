@@ -15,20 +15,45 @@ import {
 class Tables extends React.Component {
   state = {
     data: [{}],
-    srchInputValue: ''
+    searchResult: [{}],
+    inputValue: ''
   }
+
   async componentDidMount() {
     const data = await (await fetch('https://test.bdtnetworks.com/api/test/networkdata')).json();
     this.setState(() => {
       return {
-        data: JSON.parse(data)
+        ...this.state,
+        data: JSON.parse(data),
+        searchResult: JSON.parse(data)
       }
     })
   }
-  searchHandle = (ev) => {
-    
-    return Object.values(row).some(value => value.toString().indexOf(this.state.srchInputValue) !== -1)
+
+  onChange = (ev) => {
+    ev.persist();
+    this.setState(() => {
+      return {
+        ...this.state,  
+        inputValue: ev.target.value
+      }
+    })
   }
+
+  searchHandle = (ev) => {
+    ev.persist();
+    // const data = [...this.state.data];
+    const result = this.state.data.filter(row => {
+      return Object.values(row).some(value => value.toString().includes(ev.target.value));
+    })
+    this.setState(() => {
+      return {
+        ...this.state,
+        searchResult: result.length > 0 ? [...result] : this.state.data
+      }
+    });
+  }
+
   render() { 
     return (
         <div className="content">
@@ -38,7 +63,7 @@ class Tables extends React.Component {
                 <CardHeader>
                   <CardTitle tag="h4">Networks</CardTitle>
                   <CardTitle>
-                    <Input placeholder="Search here" value={this.state.srchInputValue} onChange={this.searchHandle}/>
+                    <Input placeholder="Search here" value={this.state.inputValue} onChange={this.onChange} onKeyUp={this.searchHandle}/>
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -46,7 +71,7 @@ class Tables extends React.Component {
                     <thead className="text-primary">
                       <tr>
                         {
-                          Object.keys(this.state.data[0]).map(key => {
+                          Object.keys(this.state.searchResult[0]).map(key => {
                             return key === 'Response' || key === 'Type' || key === 'Date' ? (
                               <th className="text-center">{key}</th>
                             )
@@ -59,7 +84,7 @@ class Tables extends React.Component {
                     </thead>
                     <tbody>
                       {
-                        this.state.data.map(row => {
+                        this.state.searchResult.map(row => {
                           return (
                             <tr>
                               {Object.keys(row).map(key => {
