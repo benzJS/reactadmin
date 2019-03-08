@@ -85,15 +85,36 @@ class Tables extends React.Component {
     // document.execCommand('copy');
   }
 
-  handleSubmit = (ev) => {
+  handleSubmit = async (ev) => {
     ev.persist();
     ev.preventDefault();
-    // const request = new 
+
+    // create XMLHttpRequest
+    // const request = new XMLHttpRequest();
+    // request.open('POST', 'https://test.bdtnetworks.com/api/test/networkexcute?mode=1', false);
+
+    // generate request data
     let data = new FormData(ev.target);
-    for(let value of data.values()) {
-      console.log(value);
+    const { key } = await (await fetch('https://test.bdtnetworks.com/api/test/getkey')).json();
+    data.append('Key', key);
+    ev.target['Type'].value = 'banner' ? data.set('Type', 0) : data.set('Type', 1);
+
+    let body = {};
+
+    for(let k of data.keys()) {
+      body[k] = data.get(k);
     }
-    // console.log('submit...', ev.target.length);
+
+    //send request
+    fetch('https://test.bdtnetworks.com/api/test/networkexcute?mode=1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }).then(() => this.componentDidMount())
+
+    
   }
 
   render() {
@@ -156,28 +177,14 @@ class Tables extends React.Component {
                 <ModalBody>
                   <FormGroup>
                     <Label for="name">Name</Label>
-                    <Input style={{color: 'black'}} name="name"/>
+                    <Input style={{color: 'black'}} name="Name"/>
                   </FormGroup>
                   <FormGroup>
                     <Label for="name">Banner/Wall</Label>
-                    <Input type="select" style={{color: 'black'}} name="banner/wall">
+                    <Input type="select" style={{color: 'black'}} name="Type">
                       <option value="banner">Banner</option>
                       <option value="wall">Wall</option>
                     </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="name">Postback</Label>
-                    <Input 
-                      style={{color: 'black'}}
-                      value={this.state.formData.postBack}
-                      ref={this.myRef}
-                      name="postback"
-                    />
-                    <Button onClick={this.copyToClipboard}>Copy</Button>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="name">Response</Label>
-                    <Input style={{color: 'black'}} name="response"/>
                   </FormGroup>
                 </ModalBody>
                 <ModalFooter>
