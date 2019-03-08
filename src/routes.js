@@ -3,7 +3,6 @@ import Icons from "views/Icons.jsx";
 import Map from "views/Map.jsx";
 import Notifications from "views/Notifications.jsx";
 import TableList from "views/TableList.jsx";
-import Campaign from "views/Campaign.jsx";
 import Typography from "views/Typography.jsx";
 import UserProfile from "views/UserProfile.jsx";
 
@@ -49,7 +48,7 @@ var routes = [
     layout: "/admin"
   },
   {
-    path: "/tables",
+    path: "/network",
     name: "Networks",
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-planet",
@@ -61,7 +60,7 @@ var routes = [
     name: "Campaign",
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-user-run",
-    component: Campaign,
+    component: TableList,
     layout: "/admin"
   },
   {

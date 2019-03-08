@@ -9,25 +9,44 @@ import {
   Table,
   Input,
   Row,
-  Col
+  Col,
+  Button, 
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Form,
+  FormGroup,
+  Label,
+  FormFeedback,
+  FormText,
+  InputGroup,
+  InputGroupAddon
 } from "reactstrap";
 
 class Tables extends React.Component {
   state = {
     data: [{}],
     searchResult: [{}],
-    inputValue: ''
+    inputValue: '',
+    modal: false,
+    formData: {
+      postBack: 'https://api.bdtnetworks.com/ZcYgkpHPvUu3zYlUbOOmPg/{sub_id}'
+    }
   }
 
+  myRef = React.createRef();
+
   async componentDidMount() {
-    const data = await (await fetch('https://test.bdtnetworks.com/api/test/networkdata')).json();
+    const href = this.props.href.split('/');
+    const data = await (await fetch(`https://test.bdtnetworks.com/api/test/${href[href.length -1]}data`)).json();
     this.setState(() => {
       return {
         ...this.state,
         data: JSON.parse(data),
         searchResult: JSON.parse(data)
       }
-    })
+    });
   }
 
   onChange = (ev) => {
@@ -44,27 +63,52 @@ class Tables extends React.Component {
     ev.persist();
     // const data = [...this.state.data];
     const result = this.state.data.filter(row => {
-      return Object.values(row).some(value => value.toString().includes(ev.target.value));
+      return Object.values(row).some(value => value.toString().toLowerCase().includes(ev.target.value.toLowerCase()));
     })
     this.setState(() => {
       return {
         ...this.state,
-        searchResult: result.length > 0 ? [...result] : this.state.data
+        searchResult: result.length > 0 ? [...result] : [{}]
       }
     });
   }
 
-  render() { 
+  toggle = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+  }
+
+  copyToClipboard = () => {
+    console.log(this.myRef.current);
+    // this.myRef.current.select();
+    // document.execCommand('copy');
+  }
+
+  handleSubmit = (ev) => {
+    ev.persist();
+    ev.preventDefault();
+    // const request = new 
+    let data = new FormData(ev.target);
+    for(let value of data.values()) {
+      console.log(value);
+    }
+    // console.log('submit...', ev.target.length);
+  }
+
+  render() {
+    const href = this.props.href.split('/');
     return (
         <div className="content">
           <Row>
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Networks</CardTitle>
+                  <CardTitle tag="h4" style={{textTransform: 'capitalize'}}>{href[href.length - 1]}</CardTitle>
                   <CardTitle>
                     <Input placeholder="Search here" value={this.state.inputValue} onChange={this.onChange} onKeyUp={this.searchHandle}/>
                   </CardTitle>
+                  <Button color="primary" onClick={this.toggle}>Add item</Button>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
@@ -105,6 +149,44 @@ class Tables extends React.Component {
               </Card>
             </Col>
           </Row>
+          <div>
+            <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+              <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+              <Form onSubmit={this.handleSubmit}>
+                <ModalBody>
+                  <FormGroup>
+                    <Label for="name">Name</Label>
+                    <Input style={{color: 'black'}} name="name"/>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="name">Banner/Wall</Label>
+                    <Input type="select" style={{color: 'black'}} name="banner/wall">
+                      <option value="banner">Banner</option>
+                      <option value="wall">Wall</option>
+                    </Input>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="name">Postback</Label>
+                    <Input 
+                      style={{color: 'black'}}
+                      value={this.state.formData.postBack}
+                      ref={this.myRef}
+                      name="postback"
+                    />
+                    <Button onClick={this.copyToClipboard}>Copy</Button>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="name">Response</Label>
+                    <Input style={{color: 'black'}} name="response"/>
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button type="submit" color="primary" onClick={this.toggle}>Do Something</Button>{' '}
+                  <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                </ModalFooter>
+              </Form>
+            </Modal>
+          </div>
         </div>
     );
   }
