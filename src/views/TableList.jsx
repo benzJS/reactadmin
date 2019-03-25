@@ -90,7 +90,6 @@ class Tables extends React.Component {
     let data = new FormData(ev.target);
     const { key } = await (await fetch('https://test.bdtnetworks.com/api/test/getkey')).json();
     data.append('Key', key);
-    // ev.target['Type'].value = 'banner' ? data.set('Type', 1) : data.set('Type', 0);
 
     // create body
     let body = `https://test.bdtnetworks.com/api/test/${this.state.href}excute?`;

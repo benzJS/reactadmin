@@ -5,8 +5,18 @@ import Notifications from "views/Notifications.jsx";
 import TableList from "views/TableList.jsx";
 import Typography from "views/Typography.jsx";
 import UserProfile from "views/UserProfile.jsx";
+import Leading from 'views/Leading.jsx'
+import Beem from 'views/Beem.jsx';
 
 var routes = [
+  {
+    path: "/beem",
+    name: "Beem",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-controller",
+    component: Beem,
+    layout: "/admin"
+  },
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -61,6 +71,14 @@ var routes = [
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-user-run",
     component: TableList,
+    layout: "/admin"
+  },
+  {
+    path: "/leading",
+    name: "Leading",
+    rtlName: "قائمة الجدول",
+    icon: "tim-icons icon-chat-33",
+    component: Leading,
     layout: "/admin"
   },
   {
